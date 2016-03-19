@@ -25,7 +25,8 @@ class MatcherActor extends Actor
   with  AddVisRoute
   with HashTagRoutes
   with CommentsRoute
-  with PlayListRoute{
+  with PlayListRoute
+  with LikeRoute{
 
   def actorRefFactory = context
   override implicit def executionContext = actorRefFactory.dispatcher
@@ -46,7 +47,11 @@ class MatcherActor extends Actor
     this.getPlayLists~
     this.getAddToPlayListRoute~
     this.getCreatePLayListRoute~
-    this.getTracksOfPlaylistRoute)
+    this.getTracksOfPlaylistRoute~
+    this.getTrackLikesRoute~
+    this.getLikeTrackRoute~
+    this.getUserLikedTracksRoute~
+    this.getUserTracksLikedRoute)
 }
 
 trait MatchService extends HttpService {
@@ -57,7 +62,7 @@ trait MatchService extends HttpService {
 
   val simMatcher=new Similiarity()
   val userDataAcces=new UserData()
-  val tracksDataAcces=new TracksData();
+  val tracksDataAcces=new TracksData()
 
 
 
@@ -67,9 +72,9 @@ trait MatchService extends HttpService {
   get {
     respondWithMediaType(MediaTypes.`text/plain`) {
       val users = TableQuery[Users]
-      val db= Database.forURL("jdbc:mysql://localhost:3306/test", driver="com.mysql.jdbc.Driver", user="root", password="");
+      val db= Database.forURL("jdbc:mysql://localhost:3306/test", driver="com.mysql.jdbc.Driver", user="root", password="")
       parameters('id, 'name,'md5) { (id, name,md5) =>
-        val a= DBIO.seq(users +=(1, name, md5));
+        val a= DBIO.seq(users +=(1, name, md5))
         onSuccess( db.run(a)) {
           case (test)=>
           complete("succes")
@@ -101,13 +106,13 @@ trait MatchService extends HttpService {
 
   val initMAtcher:Route=path("initMatcher") {
     get {
-      val path="/home/katakonst/licenta/playserver/music/";
+      val path="/home/katakonst/licenta/playserver/music/"
       respondWithMediaType(MediaTypes.`text/html`) {
         onSuccess(tracksDataAcces.getTracks) {
           case (name) => {
             name.map(x =>
               simMatcher.addTrack(new java.io.File(path + x._3)))
-              complete("sada");
+              complete("sada")
            }
         }
       }
@@ -129,13 +134,13 @@ trait MatchService extends HttpService {
       val	lsTrack=   simMatcher.matchTrack(new java.io.File(path+nume))
 
       respondWithMediaType(MediaTypes.`application/json`) {
-        Collections.sort(lsTrack);
+        Collections.sort(lsTrack)
         import TrackJson._
         complete(lsTrack.toArray().map(x=>
               Track(0,
-                x.asInstanceOf[ResultTrack].getName(),
-                x.asInstanceOf[ResultTrack].getName(),
-                "",0)));
+                x.asInstanceOf[ResultTrack].getName,
+                x.asInstanceOf[ResultTrack].getName,
+                "",0)))
 
       }
     }
