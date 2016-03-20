@@ -5,9 +5,9 @@ package JsonModels
   */
 import spray.json.DefaultJsonProtocol
 
-case class Comment(id: Int, author_id: Int,date: String, Text:String)
+case class Comment(id: Int, author_id: Int,date: String, Text:String,authorName:String)
 
 object CommentJson extends DefaultJsonProtocol {
-  implicit val trackFormat = jsonFormat4(Comment.apply)
+  implicit val trackFormat = jsonFormat5(Comment.apply)
 }
 

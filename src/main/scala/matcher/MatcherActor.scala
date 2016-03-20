@@ -73,7 +73,7 @@ trait MatchService extends HttpService {
     respondWithMediaType(MediaTypes.`text/plain`) {
       val users = TableQuery[Users]
       val db= Database.forURL("jdbc:mysql://localhost:3306/test", driver="com.mysql.jdbc.Driver", user="root", password="")
-      parameters('id, 'name,'md5) { (id, name,md5) =>
+      parameters('name,'md5) { (name,md5) =>
         val a= DBIO.seq(users +=(1, name, md5))
         onSuccess( db.run(a)) {
           case (test)=>

@@ -6,7 +6,7 @@ package DataAcces
 
 import java.sql.Date
 
-import dataModel.{CommentsToUsers, Tracks, Comments}
+import dataModel.{Users, CommentsToUsers, Tracks, Comments}
 import slick.driver.MySQLDriver.api._
 
 import scala.concurrent.Future
@@ -23,10 +23,21 @@ class CommentsData {
 
   val comments=TableQuery[Comments]
   val tracks=TableQuery[Tracks]
+  val users=TableQuery[Users]
+
   val tracksToComments=TableQuery[CommentsToUsers]
   val db= Database.forURL("jdbc:mysql://localhost:3306/test", driver="com.mysql.jdbc.Driver", user="root", password="");
 
   def addComment(userid:Int,date:String,trackid:Int,text:String):Future[Unit]=db.run(DBIO.seq(comments+=(0,userid,trackid,date,text)))
-  def getCommentsOfTracks(id: Int): Future[Seq[(Int,Int,Int,String, String)]] = db.run(comments.filter(_.trackid===id).result)
+  def getCommentsOfTracks(id: Int): Future[Seq[((Int,Int,Int,String, String),String)]] = {
+
+    val query = for {
+      (t, l) <- comments.filter(_.trackid===id).join(users).on(_.author_id===_.id)
+
+    }
+      yield (t,l.username)
+
+    db.run(query.result)
+  }
 
 }
