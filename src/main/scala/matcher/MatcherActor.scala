@@ -51,7 +51,8 @@ class MatcherActor extends Actor
     this.getTrackLikesRoute~
     this.getLikeTrackRoute~
     this.getUserLikedTracksRoute~
-    this.getUserTracksLikedRoute)
+    this.getUserTracksLikedRoute~
+    this.getTrackLikesNr)
 }
 
 trait MatchService extends HttpService {

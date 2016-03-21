@@ -58,6 +58,20 @@ import TrackJson._
     }
   }
 
+  val getTrackLikesNr:Route=path("getTrackNrLikes")
+  {
+    import LikesNrJson._
+
+    parameters('trackId) { (trackId) =>
+      onSuccess(LikeData.getDb().getTrackLikesNr(Integer.parseInt(trackId))) {
+        case (number) =>
+          complete(LikesNr(number))
+      }
+    }
+
+
+  }
+
   def getUserLikedTracksRoute=getUserLikedTracks
   def getLikeTrackRoute=likeTrack
   def getTrackLikesRoute=getTrackLikes

@@ -42,6 +42,8 @@ class LikeData {
     db.run(query.result)
   }
 
+  def getTrackLikesNr(trackId:Int):Future[Int]=db.run(like.filter(_.track_id===trackId).length.result)
+
 
 
 }
