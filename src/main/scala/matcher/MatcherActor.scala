@@ -6,7 +6,7 @@ import DataAcces.{TracksData, UserData}
 import JsonModels.{TrackJson, Track}
 import akka.actor.{ Props, Actor }
 import com.rockymadden.stringmetric.similarity.LevenshteinMetric
-import dataModel.{Tracks, Users}
+import dataModel.{UserDb, Tracks, Users}
 import routes._
 
 import shazamapi.{ResultTrack, Similiarity}
@@ -75,7 +75,7 @@ trait MatchService extends HttpService {
       val users = TableQuery[Users]
       val db= Database.forURL("jdbc:mysql://localhost:3306/test", driver="com.mysql.jdbc.Driver", user="root", password="")
       parameters('name,'md5) { (name,md5) =>
-        val a= DBIO.seq(users +=(1, name, md5))
+        val a= DBIO.seq(users +=UserDb(1, name, md5,""))
         onSuccess( db.run(a)) {
           case (test)=>
           complete("succes")
@@ -94,7 +94,7 @@ trait MatchService extends HttpService {
           import LoginJSon._
           onSuccess(userDataAcces.getMd5Pass(nume)) {
             case (name) =>
-              complete(name.map(x => Login(x._1, x._2,x._3)));
+              complete(name.map(x => Login(x.id, x.username,x.md5Hash)));
           }
         }
       }
@@ -110,11 +110,11 @@ trait MatchService extends HttpService {
       val path="/home/katakonst/licenta/playserver/music/"
       respondWithMediaType(MediaTypes.`text/html`) {
         onSuccess(tracksDataAcces.getTracks) {
-          case (name) => {
-            name.map(x =>
-              simMatcher.addTrack(new java.io.File(path + x._3)))
+          case (name) =>
+            name.foreach(x =>
+              simMatcher.addTrack(new java.io.File(path + x.name)))
               complete("sada")
-           }
+
         }
       }
     }
@@ -131,7 +131,7 @@ trait MatchService extends HttpService {
   {
     parameters('nume){(nume)=>
       val tracks = TableQuery[Tracks]
-      val path="/home/katakonst/licenta/playserver/music/";
+      val path="/home/katakonst/licenta/playserver/music/"
       val	lsTrack=   simMatcher.matchTrack(new java.io.File(path+nume))
 
       respondWithMediaType(MediaTypes.`application/json`) {

@@ -21,9 +21,13 @@ trait HashTagRoutes extends HttpService  {
         import TrackJson._
         parameters('id) { id =>
 
-          onSuccess(HashTagData.getDb().getTracksOnHashTag(Integer.parseInt(id))){
+          onSuccess(HashTagData.getDb.getTracksOnHashTag(Integer.parseInt(id))){
             case (name) =>
-              complete(name.map(x => Track(x._1, x._2, x._3, x._4, x._5)))
+              complete(name.map(track => Track(track.id,
+                track.name,
+                track.link,
+                track.photo,
+                track.vizualizari)))
 
           }
 
@@ -31,6 +35,6 @@ trait HashTagRoutes extends HttpService  {
     }
    }
   }
-  def getHashRoutes=hashRoutes;
+  def getHashRoutes=hashRoutes
 
 }

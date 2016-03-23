@@ -45,8 +45,11 @@ trait CommentsRoute extends HttpService {
 
           onSuccess(CommentsData.getDb.getCommentsOfTracks(Integer.parseInt(trackid))) {
           case (name) =>
-              complete(name.map(x=>Comment(x._1._1,x._1._2,x._1._4.toString,x._1._5,x._2)))
-           // complete(name.map(x=>))
+              complete(name.map(x=>Comment(x._1.id
+                ,x._1.author_id,
+                x._1.date.toString,
+                x._1.text,x._2,
+                x._3)))
         }
 
         }
@@ -54,7 +57,7 @@ trait CommentsRoute extends HttpService {
     }
   }
 
-  def getAddCommentRoute=addComment;
+  def getAddCommentRoute=addComment
 
 
 }

@@ -16,10 +16,11 @@ trait LikeRoute  extends HttpService {
   val getTrackLikes:Route=path("getTrackLikes")
   {
     import LikeJson._
+
     parameters('trackId) { (trackId)=>
-    onSuccess(LikeData.getDb().getTrackLikes(Integer.parseInt(trackId))) {
+    onSuccess(LikeData.getDb.getTrackLikes(Integer.parseInt(trackId))) {
           case (likes) =>
-                     complete( likes.map(x=>Like(x._1,x._2,x._3)))
+                     complete( likes.map(like=>Like(like.like_id,like.user_id,like.track_id)))
                }
         }
 
@@ -30,7 +31,7 @@ trait LikeRoute  extends HttpService {
     import LikeJson._
 
     parameters('trackId,'userId) { (trackId,userId)=>
-      onSuccess(LikeData.getDb().likeTrack(Integer.parseInt(trackId),Integer.parseInt(userId))) {
+      onSuccess(LikeData.getDb.likeTrack(Integer.parseInt(trackId),Integer.parseInt(userId))) {
         case (nothing) => complete("succes")
       }
     }
@@ -40,9 +41,13 @@ trait LikeRoute  extends HttpService {
   {
 import TrackJson._
     parameters('userId) { (userId)=>
-      onSuccess(LikeData.getDb().getUsersTracksLikes(Integer.parseInt(userId))) {
+      onSuccess(LikeData.getDb.getUsersTracksLikes(Integer.parseInt(userId))) {
         case (tracks) =>
-          complete(tracks.map(x => Track(x._1, x._2,x._3,x._4,x._5)))
+          complete(tracks.map(track =>  Track(track.id,
+            track.name,
+            track.link,
+            track.photo,
+            track.vizualizari)))
 
       }
     }
@@ -51,9 +56,9 @@ import TrackJson._
   val getUserTrackLiked:Route=path("getUserTrackLiked") {
     import UserJson._
     parameters('trackId) { (trackId) =>
-      onSuccess(LikeData.getDb().getUsersLikedTrack(Integer.parseInt(trackId))) {
+      onSuccess(LikeData.getDb.getUsersLikedTrack(Integer.parseInt(trackId))) {
         case (users) =>
-          complete(users.map(x => User(x._1, x._2)))
+          complete(users.map(user => User(user.id, user.username)))
       }
     }
   }
@@ -63,7 +68,7 @@ import TrackJson._
     import LikesNrJson._
 
     parameters('trackId) { (trackId) =>
-      onSuccess(LikeData.getDb().getTrackLikesNr(Integer.parseInt(trackId))) {
+      onSuccess(LikeData.getDb.getTrackLikesNr(Integer.parseInt(trackId))) {
         case (number) =>
           complete(LikesNr(number))
       }

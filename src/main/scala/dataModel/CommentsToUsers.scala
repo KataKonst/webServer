@@ -2,12 +2,11 @@ package dataModel
 
 import slick.driver.MySQLDriver.api._
 
-/**
-  * Created by katakonst on 3/10/16.
-  */
-class CommentsToUsers(tag: Tag) extends Table[(Int,Int)](tag, "Comments")  {
+case class CommentToUser(trackId:Int,commid:Int)
+
+class CommentsToUsers(tag: Tag) extends Table[CommentToUser](tag, "Comments")  {
   def trackid = column[Int]("trackid")
   def commid = column[Int]("commid")
 
-  def * = (trackid,commid);
+  def * = (trackid,commid)<>(CommentToUser.tupled,CommentToUser.unapply)
 }

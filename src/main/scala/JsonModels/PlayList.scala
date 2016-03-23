@@ -5,6 +5,8 @@ import spray.json.DefaultJsonProtocol
 /**
   * Created by katakonst on 3/10/16.
   */
+
+
 case class PlayList(id: Int, authorid: Int,nume: String, date:String)
 
 object PlayListJson extends DefaultJsonProtocol {

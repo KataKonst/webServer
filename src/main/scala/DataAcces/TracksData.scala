@@ -1,12 +1,12 @@
 package DataAcces
-import dataModel.{Tracks, Users}
+import dataModel.{TrackDb, Tracks, Users}
 import slick.driver.MySQLDriver.api._
 import scala.concurrent.Future
 
 
 
 object  TracksData {
-  def getDb():TracksData=new TracksData();;
+  def getDb:TracksData=new TracksData()
 
 }
 
@@ -17,9 +17,9 @@ class TracksData {
   val db= Database.forURL("jdbc:mysql://localhost:3306/test", driver="com.mysql.jdbc.Driver", user="root", password="")
   val tracks = TableQuery[Tracks]
 
-  def addTrack(nume:String,photo:String,uploaderId:Int):Future[Unit]=db.run(DBIO.seq(tracks +=(1, nume, nume,photo,0,uploaderId)))
+  def addTrack(nume:String,photo:String,uploaderId:Int):Future[Unit]=db.run(DBIO.seq(tracks +=TrackDb(1, nume, nume,photo,0,uploaderId)))
 
-  def getTracks:Future[Seq[(Int,String,String,String,Int,Int)]]=db.run(tracks.result)
+  def getTracks:Future[Seq[TrackDb]]=db.run(tracks.result)
 
   def getVizs(id:Int):Future[Option[Int]]=db.run(tracks.filter(_.id===id).map(_.Vizualizari).result.headOption)
 

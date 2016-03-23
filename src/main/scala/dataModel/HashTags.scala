@@ -5,9 +5,11 @@ import slick.driver.MySQLDriver.api._
 /**
   * Created by katakonst on 3/9/16.
   */
-class HashTag(tag: Tag) extends Table[(Int, String)](tag, "HashTag") {
+case class HashTagDb(id:Int, description:String)
+
+class HashTags(tag: Tag) extends Table[HashTagDb](tag, "HashTag") {
   def id = column[Int]("id",O.PrimaryKey,O.AutoInc)
   def description = column[String]("description")
-  def * = (id,description);
+  def * = (id,description)<>(HashTagDb.tupled,HashTagDb.unapply)
 
 }

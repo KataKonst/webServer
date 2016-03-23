@@ -18,9 +18,13 @@ trait PlayListRoute extends HttpService {
      import spray.httpx.SprayJsonSupport._
      import PlayListJson._
 
-      onSuccess( PlayListData.getDb().getPlayLists) {
-        case (name) =>
-          complete( name.map(x=>PlayList(x._1,x._2,x._3,x._4)))
+      onSuccess( PlayListData.getDb.getPlayLists) {
+        case (playList) =>
+          complete( playList.map(playList=>
+            PlayList(playList.id,
+              playList.authorid,
+              playList.nume,
+              playList.date)))
       }
 
   }
@@ -30,7 +34,7 @@ trait PlayListRoute extends HttpService {
     import spray.httpx.SprayJsonSupport._
     import PlayListJson._
     parameters('playId,'trackId) {(playId,trackId)=>
-      onSuccess(PlayListData.getDb().addToPlayList(Integer.parseInt(playId),Integer.parseInt(trackId))) {
+      onSuccess(PlayListData.getDb.addToPlayList(Integer.parseInt(playId),Integer.parseInt(trackId))) {
         case (name) =>
           complete("succes")
       }
@@ -42,7 +46,7 @@ trait PlayListRoute extends HttpService {
     import spray.httpx.SprayJsonSupport._
     import PlayListJson._
     parameters('userId,'nume) { (userId, nume) =>
-      onSuccess(PlayListData.getDb().createPlayList(Integer.parseInt(userId), "1-1-2001", nume)) {
+      onSuccess(PlayListData.getDb.createPlayList(Integer.parseInt(userId), "1-1-2001", nume)) {
         case (name) =>
           complete("succes")
       }
@@ -56,10 +60,10 @@ trait PlayListRoute extends HttpService {
     parameter('playId ) {(playId)=>
       import TrackJson._
 
-      onSuccess(PlayListData.getDb().getTrackPlayList(Integer.valueOf(playId))) {
+      onSuccess(PlayListData.getDb.getTrackPlayList(Integer.valueOf(playId))) {
 
-        case (name) =>
-          complete(name.map(x => Track(x._1, x._2, x._3, x._4, x._5)))
+        case (tracks) =>
+          complete(tracks.map(track => Track(track.id, track.name, track.link, track.photo, track.vizualizari)))
       }
     }
   }
