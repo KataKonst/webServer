@@ -21,9 +21,13 @@ class TracksData {
 
   def getTracks:Future[Seq[TrackDb]]=db.run(tracks.result)
 
-  def getVizs(id:Int):Future[Option[Int]]=db.run(tracks.filter(_.id===id).map(_.Vizualizari).result.headOption)
+  def getVizs(id:Int):Future[Option[Int]]=db.run(tracks.filter( lTrack=>lTrack.id===id)
+         .map((lTrack)=>lTrack.Vizualizari)
+         .result.headOption)
 
-  def addVis(id:Int,viz:Int):Future[Int]=db.run(tracks.filter(_.id===id).map(x=>x.Vizualizari).update(viz+1))
+  def addVis(id:Int,viz:Int):Future[Int]=db.run(tracks.filter(lTrack=>lTrack.id===id).map(x=>x.Vizualizari).update(viz+1))
 
-  def addPhoto(nume:String,photo:String):Future[Int]=db.run(tracks.filter(_.name===nume).map(x=>x.photo).update(photo))
+  def addPhoto(nume:String,photo:String):Future[Int]=db.run(tracks.filter
+        (lTrack=>lTrack.name===nume).
+    map(lTrack=>lTrack.photo).update(photo))
 }

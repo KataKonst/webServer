@@ -32,7 +32,9 @@ class CommentsData {
   def getCommentsOfTracks(id: Int): Future[Seq[(CommentDb,String,String)]] = {
 
     val query = for {
-      (comments, users) <- comments.filter(_.trackid===id).join(users).on(_.author_id===_.id)
+      (comments, users) <- comments.filter(
+        lComment=>lComment.trackid===id).join(users).on(
+        (lComment,lUser)=>lComment.author_id===lUser.id)
 
     }
       yield (comments,users.username,users.photoLink)

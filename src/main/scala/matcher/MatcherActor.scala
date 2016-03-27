@@ -26,7 +26,8 @@ class MatcherActor extends Actor
   with HashTagRoutes
   with CommentsRoute
   with PlayListRoute
-  with LikeRoute{
+  with LikeRoute
+  with UserRoute{
 
   def actorRefFactory = context
   override implicit def executionContext = actorRefFactory.dispatcher
@@ -52,7 +53,12 @@ class MatcherActor extends Actor
     this.getLikeTrackRoute~
     this.getUserLikedTracksRoute~
     this.getUserTracksLikedRoute~
-    this.getTrackLikesNr)
+    this.getTrackLikesNr~
+    this.getSearchedUsersRoute~
+    this.getUserPlayLists~
+    this.getDeletePlayListRoute~
+    this.getUnLikeRoute~
+    this.getCheckUserLikedTrackRoute)
 }
 
 trait MatchService extends HttpService {

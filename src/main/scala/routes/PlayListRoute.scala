@@ -18,14 +18,17 @@ trait PlayListRoute extends HttpService {
      import spray.httpx.SprayJsonSupport._
      import PlayListJson._
 
-      onSuccess( PlayListData.getDb.getPlayLists) {
+      onSuccess( PlayListData.getDb.getPlaylsts) {
         case (playList) =>
           complete( playList.map(playList=>
             PlayList(playList.id,
               playList.authorid,
               playList.nume,
               playList.date)))
+
+
       }
+
 
   }
 
@@ -68,9 +71,49 @@ trait PlayListRoute extends HttpService {
     }
   }
 
+  val getUserPlayList:Route=path("userPlayLists")
+  {
+    import spray.httpx.SprayJsonSupport._
+
+    parameter('userId ) {(userId)=>
+      import PlayListJson._
+
+      onSuccess(PlayListData.getDb.getUserPlaylists(Integer.valueOf(userId))) {
+
+        case (playLists) =>
+          complete(
+            playLists.map(playList=>
+            PlayList(playList.id,
+              playList.authorid,
+              playList.nume,
+              playList.date))
+          )}
+    }
+  }
+
+  val deletePlayList:Route=path("deletePlayList")
+  {
+    parameter('playId ){
+      (playId)=>
+                onSuccess(PlayListData.getDb.deleteFromTrackToPlayLis(Integer.parseInt(playId))) {
+                  case (succes)=>
+                  onSuccess(PlayListData.getDb.deletePlayList(Integer.parseInt(playId))) {
+                    case (result) => complete("")
+
+                  }
+                }
+
+    }
+
+  }
+
+
   def getCreatePLayListRoute=createPlayList
   def getAddToPlayListRoute=addToPlayList
   def getPlayListsRoute=getPlayLists
   def getTracksOfPlaylistRoute=tracksOfPlayList
+  def getUserPlayLists=getUserPlayList
+  def getDeletePlayListRoute=deletePlayList
+
 
 }

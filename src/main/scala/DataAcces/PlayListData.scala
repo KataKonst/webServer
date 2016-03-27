@@ -27,15 +27,20 @@ class PlayListData {
   def getTrackPlayList(playId:Int): Future[Seq[TrackDb]] = {
 
     val query = for {
-      (track, tracktoplaylist) <- tracks join trackPlaylist on (_.id === _.trackid)
+      (track, tracktoplaylist) <- tracks join trackPlaylist on (
+                (lTrack,lTrackToPlayList)=>lTrack.id === lTrackToPlayList.trackid)
       if tracktoplaylist.playid === playId
     }
       yield track
 
     db.run(query.result)
   }
+  def getPlaylsts=db.run(playList.result)
 
-  def getPlayLists:Future[Seq[PlayListDb]]=db.run(playList.result)
+
+  def getUserPlaylists(userId:Int):Future[Seq[PlayListDb]]=db.run(playList.filter(playlist=>playlist.authorid===userId).result)
+ def deletePlayList(playId:Int)=db.run(playList.filter((playList)=>playList.id===playId).delete)
+  def deleteFromTrackToPlayLis(playId:Int):Future[Int]=db.run(trackPlaylist.filter(ptrackPlaylist=>ptrackPlaylist.playid===playId).delete)
 
 
 

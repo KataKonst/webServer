@@ -24,11 +24,14 @@ class HashTagData {
 
   def addHashTags(description:String):Future[Unit]=db.run(DBIO.seq(hash+=HashTagDb(0,description)))
   def addHashTagtoTrack(description:String):Future[Unit]=db.run(DBIO.seq(hash+=HashTagDb(0,description)))
-  def getHashTagId(description:String):Future[Option[Int]]=db.run(hash.filter(_.description===description).map(x=>x.id).result.headOption)
+  def getHashTagId(description:String):Future[Option[Int]]=db.run(hash.filter(lHash=>
+    lHash.description===description).
+    map(x=>x.id)
+    .result.headOption)
   def getTracksOnHashTag(id: Int): Future[Seq[TrackDb]] = {
 
     val query = for {
-      (tracks, hash) <- tracks join hashToTracks on (_.id === _.trackId)
+      (tracks, hash) <- tracks join hashToTracks on ((lTrack,lHash)=>lTrack.id === lHash.trackId)
         if hash.hashId === id
       }
       yield tracks

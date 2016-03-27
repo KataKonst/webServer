@@ -58,13 +58,12 @@ import TrackJson._
     parameters('trackId) { (trackId) =>
       onSuccess(LikeData.getDb.getUsersLikedTrack(Integer.parseInt(trackId))) {
         case (users) =>
-          complete(users.map(user => User(user.id, user.username)))
+          complete(users.map(user => User(user.id, user.username,user.photoLink)))
       }
     }
   }
 
-  val getTrackLikesNr:Route=path("getTrackNrLikes")
-  {
+  val getTrackLikesNr:Route=path("getTrackNrLikes") {
     import LikesNrJson._
 
     parameters('trackId) { (trackId) =>
@@ -73,13 +72,45 @@ import TrackJson._
           complete(LikesNr(number))
       }
     }
-
-
   }
+
+
+    val unlike:Route=path("unlike") {
+      import LikesNrJson._
+
+      parameters('trackId, 'userId) { (trackId, userId) =>
+        onSuccess(LikeData.getDb.unLike(Integer.parseInt(trackId), Integer.parseInt(userId))) {
+          case (number) =>
+            complete("succes")
+        }
+      }
+    }
+
+      val checkUserLikedTrack:Route=path("checkUserLikedTrack")
+      {
+        import UserLikedTrackJson._
+
+        parameters('trackId ,'userId) { (trackId,userId) =>
+          onSuccess(LikeData.getDb.checkUserLikedTrack(Integer.parseInt(trackId),Integer.parseInt(userId))) {
+            case (0) =>
+              complete(UserLikedTrack(false))
+            case _=>
+              complete(UserLikedTrack(true))
+
+          }
+        }
+
+
+
+    }
 
   def getUserLikedTracksRoute=getUserLikedTracks
   def getLikeTrackRoute=likeTrack
   def getTrackLikesRoute=getTrackLikes
   def getUserTracksLikedRoute=getUserTrackLiked
+  def getCheckUserLikedTrackRoute=checkUserLikedTrack
+  def getUnLikeRoute=unlike
+
+
 
 }

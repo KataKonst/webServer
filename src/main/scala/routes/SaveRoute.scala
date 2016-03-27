@@ -16,10 +16,10 @@ trait SaveRoute extends HttpService  {
 
   val saveRoute:Route=path("save") {
     entity(as[MultipartContent]) { emailData =>
-      File("/home/katakonst/licenta/playserver/music/" + emailData.parts.apply(0).filename.get).writeBytes(emailData.parts.apply(0).entity.data.toByteArray)
+      File("/home/katakonst/licenta/playserver/music/" + emailData.parts.head.filename.get).writeBytes(emailData.parts.head.entity.data.toByteArray)
       File("/home/katakonst/licenta/playserver/images/" + emailData.parts.apply(1).filename.get).writeBytes(emailData.parts.apply(1).entity.data.toByteArray)
 
-      onSuccess( TracksData.getDb().addTrack(emailData.parts.apply(0).filename.get,emailData.parts.apply(1).filename.get,0)) {
+      onSuccess( TracksData.getDb.addTrack(emailData.parts.head.filename.get,emailData.parts.apply(1).filename.get,0)) {
         case (test)=>
           complete("succes")
       }

@@ -15,13 +15,12 @@ trait AddVisRoute  extends HttpService {
 
   val addVisRoute:Route=path("addVis") {
     parameter('id) { (id) =>
-      onSuccess( TracksData.getDb().getVizs(Integer.parseInt(id))) {
+      onSuccess( TracksData.getDb.getVizs(Integer.parseInt(id))) {
         case (test)=>
-           onSuccess(TracksData.getDb().addVis(Integer.parseInt(id),test.getOrElse(0)))
+           onSuccess(TracksData.getDb.addVis(Integer.parseInt(id),test.getOrElse(0)))
                   {
-                          case(test)=>{
-                                     complete("succes")
-                                  }
+                          case(track)=>complete("succes")
+
                   }
       }
     }
@@ -31,16 +30,16 @@ trait AddVisRoute  extends HttpService {
   {
     parameter('id){id=>
 
-      onSuccess( TracksData.getDb().getVizs(Integer.parseInt(id))) {
-        case(id)=> complete(String.valueOf(id.get))
+      onSuccess( TracksData.getDb.getVizs(Integer.parseInt(id))) {
+        case(viz)=> complete(String.valueOf(viz.get))
       }
 
     }
 
 
   }
-  def getVisRoute=addVisRoute;
-  def getTrackVisRoute=trackVis;
+  def getVisRoute=addVisRoute
+  def getTrackVisRoute=trackVis
 
 
 
