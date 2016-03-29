@@ -1,7 +1,7 @@
 package routes
 
 import DataAcces.{PlayListData, TracksData}
-import JsonModels.{PlayList, PlayListJson, Track, TrackJson}
+import JsonModels._
 import com.rockymadden.stringmetric.similarity.LevenshteinMetric
 import spray.routing._
 
@@ -107,6 +107,45 @@ trait PlayListRoute extends HttpService {
 
   }
 
+  val deleteTrackFromPlayList:Route=path("deleteTrackFromPlayList")
+  {
+
+    parameter('playId, 'trackId ){(playId,trackId)=>
+      {
+        onSuccess(PlayListData.getDb.deleteTrackFromPlayList(Integer.parseInt(trackId),Integer.parseInt(playId)))
+        {
+          case (succes)=>
+                complete("succes")
+        }
+      }
+
+    }
+
+  }
+
+  val checkTrackFromPlayList:Route=path("checkTrackFromPlayList")
+  {
+    import spray.httpx.SprayJsonSupport._
+
+    parameter('playId, 'trackId ){(playId,trackId)=>
+    {
+      import TrackInPlayListJson._
+
+      onSuccess(PlayListData.getDb.checkTrackPlayList(Integer.parseInt(trackId),Integer.parseInt(playId)))
+      {
+
+        case (0) =>
+          complete(TrackInPlayList(false))
+        case _=>
+          complete(TrackInPlayList(true))
+      }
+    }
+
+    }
+
+  }
+
+
 
   def getCreatePLayListRoute=createPlayList
   def getAddToPlayListRoute=addToPlayList
@@ -114,6 +153,10 @@ trait PlayListRoute extends HttpService {
   def getTracksOfPlaylistRoute=tracksOfPlayList
   def getUserPlayLists=getUserPlayList
   def getDeletePlayListRoute=deletePlayList
+  def getDeleteTrackFromPlayListRoute=deleteTrackFromPlayList
+  def getCheckTrackFromPlayListRoute=checkTrackFromPlayList
+
+
 
 
 }

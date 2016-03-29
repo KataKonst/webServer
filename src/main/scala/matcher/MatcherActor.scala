@@ -58,7 +58,10 @@ class MatcherActor extends Actor
     this.getUserPlayLists~
     this.getDeletePlayListRoute~
     this.getUnLikeRoute~
-    this.getCheckUserLikedTrackRoute)
+    this.getCheckUserLikedTrackRoute~
+     this.getDeleteTrackFromPlayListRoute~
+    this.getCheckTrackFromPlayListRoute~
+    this.getDeleteComRoute)
 }
 
 trait MatchService extends HttpService {

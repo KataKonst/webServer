@@ -41,5 +41,6 @@ class CommentsData {
 
     db.run(query.result)
   }
+  def deleteComment(id:Int):Future[Int]=db.run(comments.filter((pComments)=>pComments.id===id).delete)
 
 }

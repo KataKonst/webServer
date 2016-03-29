@@ -39,9 +39,16 @@ class PlayListData {
 
 
   def getUserPlaylists(userId:Int):Future[Seq[PlayListDb]]=db.run(playList.filter(playlist=>playlist.authorid===userId).result)
- def deletePlayList(playId:Int)=db.run(playList.filter((playList)=>playList.id===playId).delete)
+  def deletePlayList(playId:Int)=db.run(playList.filter((playList)=>playList.id===playId).delete)
   def deleteFromTrackToPlayLis(playId:Int):Future[Int]=db.run(trackPlaylist.filter(ptrackPlaylist=>ptrackPlaylist.playid===playId).delete)
 
+  def checkTrackPlayList(trackid:Int,playId:Int):Future[Int]=db.run(trackPlaylist.filter(
+    (pTrackPlayList)=>pTrackPlayList.playid===playId&&pTrackPlayList.trackid===trackid)
+    .length
+    .result)
 
+  def deleteTrackFromPlayList(trackId:Int,playId:Int):Future[Int]=db.run(trackPlaylist.filter(
+    (pTrackPlayList)=>pTrackPlayList.playid===playId&&pTrackPlayList.trackid===trackId).delete
+  )
 
 }
