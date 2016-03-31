@@ -1,7 +1,7 @@
 package routes
 
 import DataAcces.{HashTagData, TracksData}
-import JsonModels.{Track, TrackJson}
+import JsonModels.{HashTag, HashTagJson, Track, TrackJson}
 import spray.http.MediaTypes
 import spray.routing._
 
@@ -13,13 +13,13 @@ trait HashTagRoutes extends HttpService  {
 
   implicit def executionContext = actorRefFactory.dispatcher
 
-  val hashRoutes: Route = path("getTracksHash") {
+  val hashTracks: Route = path("getTracksOfHash") {
     import spray.httpx.SprayJsonSupport._
 
     get {
       respondWithMediaType(MediaTypes.`text/plain`) {
         import TrackJson._
-        parameters('id) { id =>
+        parameters('hashId) { id =>
 
           onSuccess(HashTagData.getDb.getTracksOnHashTag(Integer.parseInt(id))){
             case (name) =>
@@ -35,6 +35,45 @@ trait HashTagRoutes extends HttpService  {
     }
    }
   }
-  def getHashRoutes=hashRoutes
+  val hashOfTracks:Route=path("getHashOfTrack")
+  {
+    import spray.httpx.SprayJsonSupport._
+    get {
+      respondWithMediaType(MediaTypes.`text/plain`) {
+        import HashTagJson._
+        parameters('trackId) { trackId =>
+
+          onSuccess(HashTagData.getDb.getHashTagOnTracks(Integer.parseInt(trackId))){
+            case (hashs) =>
+              complete(hashs.map(hash =>HashTag(hash.id,hash.description)))
+
+          }
+
+        }
+      }
+    }
+
+
+  }
+  val getAllHashs:Route=path("getAllHashs") {
+    get {
+      import spray.httpx.SprayJsonSupport._
+
+      respondWithMediaType(MediaTypes.`text/plain`) {
+        import HashTagJson._
+
+
+        onSuccess(HashTagData.getDb.getHashTags) {
+          case (hashs) =>
+            complete(hashs.map(hash => HashTag(hash.id, hash.description)))
+
+           }
+        }
+      }
+    }
+
+  def getHashOfTrackRoute=hashOfTracks
+  def getTracksOfHash=hashTracks
+  def getAllHashTagsRoute=getAllHashs
 
 }

@@ -1,9 +1,10 @@
 package routes
 
-import DataAcces.TracksData
+import DataAcces.{HashTagData, TracksData}
 import spray.http.MultipartContent
 import spray.routing._
 
+import scala.concurrent.Future
 import scala.reflect.io.File
 
 
@@ -16,13 +17,26 @@ trait SaveRoute extends HttpService  {
 
   val saveRoute:Route=path("save") {
     entity(as[MultipartContent]) { emailData =>
-      File("/home/katakonst/licenta/playserver/music/" + emailData.parts.head.filename.get).writeBytes(emailData.parts.head.entity.data.toByteArray)
-      File("/home/katakonst/licenta/playserver/images/" + emailData.parts.apply(1).filename.get).writeBytes(emailData.parts.apply(1).entity.data.toByteArray)
+      val boss= emailData.parts.head.entity.data.asString.split("#").map(x=>"#"+x.trim)
 
-      onSuccess( TracksData.getDb.addTrack(emailData.parts.head.filename.get,emailData.parts.apply(1).filename.get,0)) {
+      print( boss)
+     File("/home/katakonst/licenta/playserver/music/" + emailData.parts.apply(1).filename.get).writeBytes(emailData.parts.apply(1).entity.data.toByteArray)
+      File("/home/katakonst/licenta/playserver/images/" + emailData.parts.apply(2).filename.get).writeBytes(emailData.parts.apply(2).entity.data.toByteArray)
+      onSuccess( TracksData.getDb.addTrack(emailData.parts.apply(1).filename.get,emailData.parts.apply(2).filename.get,0)) {
         case (test)=>
-          complete("succes")
-      }
+
+        val a= boss.map(hash=>
+              HashTagData.getDb.getHashTagId(hash).map(
+              hashTag=>HashTagData.getDb.addHashTagtoTrack(test,hashTag.getOrElse(
+               HashTagData.getDb.addHashTags(hash)).##)))
+
+          onSuccess(Future.sequence(a.toList)) {
+            case o=>
+            complete("succes");
+          }
+
+
+        }
     }
   }
 

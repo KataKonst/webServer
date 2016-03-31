@@ -1,11 +1,13 @@
 package routes
 
-import DataAcces.UserData
+import DataAcces.{TracksData, UserData}
 import JsonModels.User
 import com.rockymadden.stringmetric.similarity.LevenshteinMetric
 import dataModel.{TrackDb, UserDb}
 import spray.http.MultipartContent
 import spray.routing.{Route, HttpService}
+
+import scala.reflect.io.File
 
 /**
   * Created by katakonst on 3/24/16.
@@ -33,9 +35,44 @@ trait UserRoute extends HttpService {
 
 
 
+  val getUserById:Route=path("getUserById")
+  {
+    import spray.httpx.SprayJsonSupport._
+    import JsonModels.UserJson._
+    parameters('userId) { userId =>
+      onSuccess(UserData.getDb.getUserById(Integer.parseInt(userId))){
+
+        case (users)=>
+          complete(users.map((user)=>User(user.id,user.username,user.photoLink)))
+
+      }
+
+    }
+
+  }
+
+  val addPhotoToUser:Route=path("addPhotoToUser")
+  {
+     entity(as[MultipartContent]) { emailData =>
+      val id= emailData.parts.head.entity.data.asString
+      File("/home/katakonst/licenta/playserver/images/" + emailData.parts.apply(1).filename.get).writeBytes(emailData.parts.apply(1).entity.data.toByteArray)
+      onSuccess(UserData.getDb.addPhotoToUser(Integer.parseInt(id),emailData.parts.apply(1).filename.get)) {
+        case (test)=>
+          complete("succes")
+      }
+    }
+
+
+  }
+
+
+
+
 
 
   def getSearchedUsersRoute=searchedUsers
+  def getAddPhotoToUserRoute=addPhotoToUser
+  def getSearchByIdRoute=getUserById
 
 
 

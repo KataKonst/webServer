@@ -17,7 +17,8 @@ class TracksData {
   val db= Database.forURL("jdbc:mysql://localhost:3306/test", driver="com.mysql.jdbc.Driver", user="root", password="")
   val tracks = TableQuery[Tracks]
 
-  def addTrack(nume:String,photo:String,uploaderId:Int):Future[Unit]=db.run(DBIO.seq(tracks +=TrackDb(1, nume, nume,photo,0,uploaderId)))
+  def addTrack(nume:String,photo:String,uploaderId:Int):Future[Int]=db.run(
+    (tracks returning tracks.map(_.id)) +=TrackDb(1, nume, nume,photo,0,uploaderId))
 
   def getTracks:Future[Seq[TrackDb]]=db.run(tracks.result)
 

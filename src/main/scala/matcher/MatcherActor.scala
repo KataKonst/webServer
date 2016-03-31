@@ -42,7 +42,6 @@ class MatcherActor extends Actor
     initMAtcher~
     this.getVisRoute~
     this.getTrackVisRoute~
-    this.getHashRoutes~
     this.getAddCommentRoute~
     this.getTracksComments~
     this.getPlayLists~
@@ -61,7 +60,12 @@ class MatcherActor extends Actor
     this.getCheckUserLikedTrackRoute~
      this.getDeleteTrackFromPlayListRoute~
     this.getCheckTrackFromPlayListRoute~
-    this.getDeleteComRoute)
+    this.getDeleteComRoute~
+    this.getHashOfTrackRoute~
+    this.getTracksOfHash~
+    this.getAllHashTagsRoute~
+    this.getAddPhotoToUserRoute~
+    this.getUserById)
 }
 
 trait MatchService extends HttpService {
@@ -141,7 +145,7 @@ trait MatchService extends HttpService {
     parameters('nume){(nume)=>
       val tracks = TableQuery[Tracks]
       val path="/home/katakonst/licenta/playserver/music/"
-      val	lsTrack=   simMatcher.matchTrack(new java.io.File(path+nume))
+      val	lsTrack=simMatcher.matchTrack(new java.io.File(path+nume))
 
       respondWithMediaType(MediaTypes.`application/json`) {
         Collections.sort(lsTrack)

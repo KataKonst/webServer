@@ -26,6 +26,7 @@ class UserData {
   def addPhotoToUser(id:Int,photo:String):Future[Int]=db.run(users.filter
       (lUser=>lUser.id===id).
     map(lUser=>lUser.photoLink).update(photo))
+  def getUserById(userId:Int):Future[Seq[UserDb]]=db.run(users.filter((user)=>user.id===userId).result)
 
 
 }
