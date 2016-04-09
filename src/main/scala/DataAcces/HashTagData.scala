@@ -52,7 +52,10 @@ class HashTagData {
 
   def getHashTags:Future[Seq[HashTagDb]]=db.run(hash.result)
 
+  def deleteTrack(trackId:Int):Future[Int]=db.run(hashToTracks.filter((pHash)=>pHash.trackId===trackId).delete)
 
-  }
+
+
+}
 
 

@@ -1,10 +1,11 @@
 package routes
 
 import DataAcces.{TracksData, UserData}
-import JsonModels.User
+import JsonModels.{TrackInPlayListJson, TrackInPlayList, User}
 import com.rockymadden.stringmetric.similarity.LevenshteinMetric
 import dataModel.{TrackDb, UserDb}
-import spray.http.MultipartContent
+import matcher.Constants
+import spray.http.{MediaTypes, MultipartContent}
 import spray.routing.{Route, HttpService}
 
 import scala.reflect.io.File
@@ -58,21 +59,102 @@ trait UserRoute extends HttpService {
       File("/home/katakonst/licenta/playserver/images/" + emailData.parts.apply(1).filename.get).writeBytes(emailData.parts.apply(1).entity.data.toByteArray)
       onSuccess(UserData.getDb.addPhotoToUser(Integer.parseInt(id),emailData.parts.apply(1).filename.get)) {
         case (test)=>
-          complete("succes")
-      }
+          respondWithMediaType(MediaTypes.`text/html`) {
+
+            complete("<META http-equiv=\"refresh\" content=\"0;URL=http://"+Constants.ip+"\">");
+          }      }
     }
 
 
   }
 
 
+  val followUser:Route=path("followUser") {
+    parameters('userId, 'followUser) {(userId,followUser)=>
 
 
+      onSuccess(UserData.getDb.followUser(Integer.parseInt(userId),Integer.parseInt(followUser)))
+      {
+        case (succes)=>complete("ssa")
+      }
+
+    }
+  }
+
+  val unFollowUser:Route=path("unfollowUser")
+  {
+    parameters('userId, 'followUser) {(userId,followUser)=>
+
+
+      onSuccess(UserData.getDb.unfollowUser(Integer.parseInt(userId),Integer.parseInt(followUser)))
+      {
+        case (succes)=>complete("ssa")
+      }
+
+    }
+
+  }
+
+  val isUserFollowing:Route=path("isUserFollowing")
+  {
+    import spray.httpx.SprayJsonSupport._
+
+    parameters('userId, 'followUser){(userId,followUser)=>
+
+      import TrackInPlayListJson._
+
+      onSuccess(UserData.getDb.isUserFollowing(Integer.parseInt(userId),Integer.parseInt(followUser)))
+      {
+        case (0) =>
+          complete(TrackInPlayList(false))
+        case _=>
+          complete(TrackInPlayList(true))      }
+
+    }
+  }
+
+
+
+
+  val  getFollowers:Route=path("getFollowers")
+  {
+    import spray.httpx.SprayJsonSupport._
+    import JsonModels.UserJson._
+
+    parameter('userId){userId=>
+      onSuccess(UserData.getDb.getFollowers(Integer.parseInt(userId))){
+        case (users)=>
+          complete(users.map((user)=>User(user.id,user.username,user.photoLink)))
+      }
+
+
+    }
+  }
+  val getFollowing:Route=path("getFollowing") {
+    import spray.httpx.SprayJsonSupport._
+    import JsonModels.UserJson._
+
+    parameter('userId) {
+      { userId =>
+        onSuccess(UserData.getDb.getFollowing(Integer.parseInt(userId))) {
+          case (users) =>
+            complete(users.map((user) => User(user.id, user.username, user.photoLink)))
+        }
+
+      }
+
+    }
+  }
 
 
   def getSearchedUsersRoute=searchedUsers
   def getAddPhotoToUserRoute=addPhotoToUser
   def getSearchByIdRoute=getUserById
+  def getIsUserFollowingRoute=isUserFollowing
+  def getFollowUserRoute=followUser
+  def getUnfollowUserRoute=unFollowUser
+  def getFollowersRoute=getFollowers
+  def getFollowingRoute=getFollowing
 
 
 

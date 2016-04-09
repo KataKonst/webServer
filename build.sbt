@@ -43,8 +43,9 @@ libraryDependencies ++=
         "org.scalatest" %% "scalatest" % "2.2.1" % "test",
         "mysql" % "mysql-connector-java" % "5.1.35",
          "com.typesafe.slick" %% "slick" % "3.0.0",
-         "com.rockymadden.stringmetric" %% "stringmetric-core" % "0.27.3"
-    )
+         "com.rockymadden.stringmetric" %% "stringmetric-core" % "0.27.3",
+         "commons-io" % "commons-io" % "2.4",
+      "commons-codec" % "commons-codec" % "1.10")
 
 
 unmanagedJars in Compile += file("/home/katakonst/Desktop/Untitled.jar")

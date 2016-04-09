@@ -51,6 +51,7 @@ class LikeData {
 
   def unLike(trackid:Int,userId:Int):Future[Int]=db.run(like.filter((pLike)=>pLike.track_id===trackid&&pLike.user_id===userId).delete)
 
+  def deleteTrack(trackId:Int):Future[Int]=db.run(like.filter((pLike)=>pLike.track_id===trackId).delete)
 
 }
 

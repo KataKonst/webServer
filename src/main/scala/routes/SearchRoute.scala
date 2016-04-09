@@ -29,7 +29,8 @@ trait SearchRoute  extends HttpService {
              track.name,
              track.link,
              track.photo,
-             track.vizualizari)))
+             track.vizualizari,
+            track.UploaderId)))
       }
     }
   }

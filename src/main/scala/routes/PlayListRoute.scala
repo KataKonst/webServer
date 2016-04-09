@@ -66,7 +66,7 @@ trait PlayListRoute extends HttpService {
       onSuccess(PlayListData.getDb.getTrackPlayList(Integer.valueOf(playId))) {
 
         case (tracks) =>
-          complete(tracks.map(track => Track(track.id, track.name, track.link, track.photo, track.vizualizari)))
+          complete(tracks.map(track => Track(track.id, track.name, track.link, track.photo, track.vizualizari,track.UploaderId)))
       }
     }
   }

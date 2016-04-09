@@ -10,7 +10,7 @@ object Main extends App {
 
     val service = system.actorOf(Props[MatcherActor], "match-service")
 
-    val host = "localhost";
+    val host = "127.0.0.1";
      val port = 8080
     IO(Http) ! Http.Bind(service, host, port = port)
 

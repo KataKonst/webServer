@@ -47,7 +47,8 @@ import TrackJson._
             track.name,
             track.link,
             track.photo,
-            track.vizualizari)))
+            track.vizualizari,
+            track.UploaderId)))
 
       }
     }

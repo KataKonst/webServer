@@ -51,4 +51,7 @@ class PlayListData {
     (pTrackPlayList)=>pTrackPlayList.playid===playId&&pTrackPlayList.trackid===trackId).delete
   )
 
+  def deleteTrack(trackId:Int):Future[Int]=db.run(trackPlaylist.filter((ptrp)=>ptrp.trackid===trackId).delete)
+
+
 }

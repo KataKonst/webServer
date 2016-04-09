@@ -65,7 +65,15 @@ class MatcherActor extends Actor
     this.getTracksOfHash~
     this.getAllHashTagsRoute~
     this.getAddPhotoToUserRoute~
-    this.getUserById)
+    this.getUserById~
+    this.getUserUploadedTracksRoute~
+     this.getDeleteTrackRoute~
+    this.getFollowUserRoute~
+    this.getUnfollowUserRoute~
+  this.getIsUserFollowingRoute~
+   this.getFollowingUserTracksRoute~
+   this.getFollowingRoute~
+   this.getFollowersRoute)
 }
 
 trait MatchService extends HttpService {
@@ -79,8 +87,6 @@ trait MatchService extends HttpService {
   val tracksDataAcces=new TracksData()
 
 
-
-
   val register: Route = path("register")
 {
   get {
@@ -91,7 +97,10 @@ trait MatchService extends HttpService {
         val a= DBIO.seq(users +=UserDb(1, name, md5,""))
         onSuccess( db.run(a)) {
           case (test)=>
-          complete("succes")
+            respondWithMediaType(MediaTypes.`text/html`) {
+
+              complete("<META http-equiv=\"refresh\" content=\"0;URL=http://"+Constants.ip+"\">");
+            }
         }
       }
     }
@@ -154,7 +163,7 @@ trait MatchService extends HttpService {
               Track(0,
                 x.asInstanceOf[ResultTrack].getName,
                 x.asInstanceOf[ResultTrack].getName,
-                "",0)))
+                "",0,0)))
 
       }
     }
