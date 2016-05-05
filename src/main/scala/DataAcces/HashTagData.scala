@@ -12,19 +12,14 @@ import slick.driver.MySQLDriver.api._
 
 import scala.concurrent.Future
 object  HashTagData{
-  def getDb:HashTagData=new HashTagData()
-}
-
-class HashTagData {
   val hash = TableQuery[HashTags]
   val  tracks = TableQuery[Tracks]
   val  hashToTracks = TableQuery[HashTagsToTracks]
 
-  val db= Database.forURL("jdbc:mysql://localhost:3306/test", driver="com.mysql.jdbc.Driver", user="root", password="")
 
-  def addHashTags(description:String):Future[Int]=db.run((hash returning hash.map(_.id))+=HashTagDb(0,description))
-  def addHashTagtoTrack(trackId:Int,HashTagId:Int):Future[Unit]=db.run(DBIO.seq(hashToTracks+=HashTagToTrackDb(trackId,HashTagId)))
-  def getHashTagId(description:String):Future[Option[Int]]=db.run(hash.filter(lHash=>
+  def addHashTags(description:String):Future[Int]=DatabaseConn.getConnection.run((hash returning hash.map(_.id))+=HashTagDb(0,description))
+  def addHashTagtoTrack(trackId:Int,HashTagId:Int):Future[Unit]=DatabaseConn.getConnection.run(DBIO.seq(hashToTracks+=HashTagToTrackDb(trackId,HashTagId)))
+  def getHashTagId(description:String):Future[Option[Int]]=DatabaseConn.getConnection.run(hash.filter(lHash=>
     lHash.description===description).
     map(x=>x.id)
     .result.headOption)
@@ -32,11 +27,11 @@ class HashTagData {
 
     val query = for {
       (tracks, hash) <- tracks join hashToTracks on ((lTrack,lHash)=>lTrack.id === lHash.trackId)
-        if hash.hashId === id
-      }
+      if hash.hashId === id
+    }
       yield tracks
 
-    db.run(query.result)
+    DatabaseConn.getConnection.run(query.result)
   }
   def getHashTagOnTracks(trackId:Int):Future[Seq[HashTagDb]]={
 
@@ -46,14 +41,18 @@ class HashTagData {
     }
       yield hashs
 
-    db.run(query.result)
+    DatabaseConn.getConnection.run(query.result)
 
   }
 
-  def getHashTags:Future[Seq[HashTagDb]]=db.run(hash.result)
+  def getHashTags:Future[Seq[HashTagDb]]=DatabaseConn.getConnection.run(hash.result)
 
-  def deleteTrack(trackId:Int):Future[Int]=db.run(hashToTracks.filter((pHash)=>pHash.trackId===trackId).delete)
+  def deleteTrack(trackId:Int):Future[Int]=DatabaseConn.getConnection.run(hashToTracks.filter((pHash)=>pHash.trackId===trackId).delete)
 
+
+}
+
+class HashTagData {
 
 
 }

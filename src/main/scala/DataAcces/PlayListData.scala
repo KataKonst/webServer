@@ -11,47 +11,45 @@ import scala.concurrent.Future
 
 
 object PlayListData {
-  val db=TableQuery[PlayLists]
-  def getDb:PlayListData=new PlayListData()
-}
-
-
-class PlayListData {
-
   val playList=TableQuery[PlayLists]
   val trackPlaylist=TableQuery[TrackToPlayLists]
   val tracks=TableQuery[Tracks]
-  val db= Database.forURL("jdbc:mysql://localhost:3306/test", driver="com.mysql.jdbc.Driver", user="root", password="")
-  def createPlayList(userId:Int,date:String,nume:String):Future[Unit]=db.run(DBIO.seq(playList +=PlayListDb(0, userId,date,nume)))
-  def addToPlayList(playId:Int,trackId:Int):Future[Unit]=db.run(DBIO.seq(trackPlaylist +=TrackToPlayListDb(0, trackId,playId)))
+  def createPlayList(userId:Int,date:String,nume:String):Future[Unit]=DatabaseConn.getConnection.run(DBIO.seq(playList +=PlayListDb(0, userId,date,nume)))
+  def addToPlayList(playId:Int,trackId:Int):Future[Unit]=DatabaseConn.getConnection.run(DBIO.seq(trackPlaylist +=TrackToPlayListDb(0, trackId,playId)))
   def getTrackPlayList(playId:Int): Future[Seq[TrackDb]] = {
 
     val query = for {
       (track, tracktoplaylist) <- tracks join trackPlaylist on (
-                (lTrack,lTrackToPlayList)=>lTrack.id === lTrackToPlayList.trackid)
+        (lTrack,lTrackToPlayList)=>lTrack.id === lTrackToPlayList.trackid)
       if tracktoplaylist.playid === playId
     }
       yield track
 
-    db.run(query.result)
+    DatabaseConn.getConnection.run(query.result)
   }
-  def getPlaylsts=db.run(playList.result)
+  def getPlaylsts=DatabaseConn.getConnection.run(playList.result)
 
 
-  def getUserPlaylists(userId:Int):Future[Seq[PlayListDb]]=db.run(playList.filter(playlist=>playlist.authorid===userId).result)
-  def deletePlayList(playId:Int)=db.run(playList.filter((playList)=>playList.id===playId).delete)
-  def deleteFromTrackToPlayLis(playId:Int):Future[Int]=db.run(trackPlaylist.filter(ptrackPlaylist=>ptrackPlaylist.playid===playId).delete)
+  def getUserPlaylists(userId:Int):Future[Seq[PlayListDb]]=DatabaseConn.getConnection.run(playList.filter(playlist=>playlist.authorid===userId).result)
+  def deletePlayList(playId:Int)=DatabaseConn.getConnection.run(playList.filter((playList)=>playList.id===playId).delete)
+  def deleteFromTrackToPlayLis(playId:Int):Future[Int]=DatabaseConn.getConnection.run(trackPlaylist.filter(ptrackPlaylist=>ptrackPlaylist.playid===playId).delete)
 
-  def checkTrackPlayList(trackid:Int,playId:Int):Future[Int]=db.run(trackPlaylist.filter(
+  def checkTrackPlayList(trackid:Int,playId:Int):Future[Int]=DatabaseConn.getConnection.run(trackPlaylist.filter(
     (pTrackPlayList)=>pTrackPlayList.playid===playId&&pTrackPlayList.trackid===trackid)
     .length
     .result)
 
-  def deleteTrackFromPlayList(trackId:Int,playId:Int):Future[Int]=db.run(trackPlaylist.filter(
+  def deleteTrackFromPlayList(trackId:Int,playId:Int):Future[Int]=DatabaseConn.getConnection.run(trackPlaylist.filter(
     (pTrackPlayList)=>pTrackPlayList.playid===playId&&pTrackPlayList.trackid===trackId).delete
   )
 
-  def deleteTrack(trackId:Int):Future[Int]=db.run(trackPlaylist.filter((ptrp)=>ptrp.trackid===trackId).delete)
+  def deleteTrack(trackId:Int):Future[Int]=DatabaseConn.getConnection.run(trackPlaylist.filter((ptrp)=>ptrp.trackid===trackId).delete)
+
+
+}
+
+
+class PlayListData {
 
 
 }

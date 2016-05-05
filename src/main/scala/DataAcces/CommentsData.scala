@@ -14,21 +14,13 @@ import scala.concurrent.Future
 object CommentsData
 {
 
-  val db=new CommentsData()
-  def getDb:CommentsData=db
-
-}
-
-class CommentsData {
-
   val comments=TableQuery[Comments]
   val tracks=TableQuery[Tracks]
   val users=TableQuery[Users]
 
   val tracksToComments=TableQuery[CommentsToUsers]
-  val db= Database.forURL("jdbc:mysql://localhost:3306/test", driver="com.mysql.jdbc.Driver", user="root", password="")
 
-  def addComment(userid:Int,date:String,trackid:Int,text:String):Future[Unit]=db.run(DBIO.seq(comments+=CommentDb(0,userid,trackid,date,text)))
+  def addComment(userid:Int,date:String,trackid:Int,text:String):Future[Unit]=DatabaseConn.getConnection.run(DBIO.seq(comments+=CommentDb(0,userid,trackid,date,text)))
   def getCommentsOfTracks(id: Int): Future[Seq[(CommentDb,String,String)]] = {
 
     val query = for {
@@ -39,9 +31,14 @@ class CommentsData {
     }
       yield (comments,users.username,users.photoLink)
 
-    db.run(query.result)
+    DatabaseConn.getConnection.run(query.result)
   }
-  def deleteComment(id:Int):Future[Int]=db.run(comments.filter((pComments)=>pComments.id===id).delete)
-  def deleteTracks(trackId:Int):Future[Int]=db.run(comments.filter(pComments=>pComments.trackid===trackId).delete)
+  def deleteComment(id:Int):Future[Int]=DatabaseConn.getConnection.run(comments.filter((pComments)=>pComments.id===id).delete)
+  def deleteTracks(trackId:Int):Future[Int]=DatabaseConn.getConnection.run(comments.filter(pComments=>pComments.trackid===trackId).delete)
 
+
+
+}
+
+class CommentsData {
 }

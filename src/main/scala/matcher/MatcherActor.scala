@@ -73,7 +73,8 @@ class MatcherActor extends Actor
   this.getIsUserFollowingRoute~
    this.getFollowingUserTracksRoute~
    this.getFollowingRoute~
-   this.getFollowersRoute)
+   this.getFollowersRoute~
+  this.matchTracks)
 }
 
 trait MatchService extends HttpService {
@@ -99,7 +100,7 @@ trait MatchService extends HttpService {
           case (test)=>
             respondWithMediaType(MediaTypes.`text/html`) {
 
-              complete("<META http-equiv=\"refresh\" content=\"0;URL=http://"+Constants.ip+"\">");
+              complete("<META http-equiv=\"refresh\" content=\"0;URL=http://"+Constants.ip+"\">")
             }
         }
       }
@@ -114,7 +115,7 @@ trait MatchService extends HttpService {
       respondWithMediaType(MediaTypes.`application/json`) {
         parameters('nume, 'opt.?) { (nume, opt) =>
           import LoginJSon._
-          onSuccess(userDataAcces.getMd5Pass(nume)) {
+          onSuccess(UserData.getMd5Pass(nume)) {
             case (name) =>
               complete(name.map(x => Login(x.id, x.username,x.md5Hash)));
           }
@@ -131,7 +132,7 @@ trait MatchService extends HttpService {
     get {
       val path="/home/katakonst/licenta/playserver/music/"
       respondWithMediaType(MediaTypes.`text/html`) {
-        onSuccess(tracksDataAcces.getTracks) {
+        onSuccess(TracksData.getTracks) {
           case (name) =>
             name.foreach(x =>
               simMatcher.addTrack(new java.io.File(path + x.name)))

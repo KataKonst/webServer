@@ -18,7 +18,7 @@ trait PlayListRoute extends HttpService {
      import spray.httpx.SprayJsonSupport._
      import PlayListJson._
 
-      onSuccess( PlayListData.getDb.getPlaylsts) {
+      onSuccess( PlayListData.getPlaylsts) {
         case (playList) =>
           complete( playList.map(playList=>
             PlayList(playList.id,
@@ -37,7 +37,7 @@ trait PlayListRoute extends HttpService {
     import spray.httpx.SprayJsonSupport._
     import PlayListJson._
     parameters('playId,'trackId) {(playId,trackId)=>
-      onSuccess(PlayListData.getDb.addToPlayList(Integer.parseInt(playId),Integer.parseInt(trackId))) {
+      onSuccess(PlayListData.addToPlayList(Integer.parseInt(playId),Integer.parseInt(trackId))) {
         case (name) =>
           complete("succes")
       }
@@ -49,7 +49,7 @@ trait PlayListRoute extends HttpService {
     import spray.httpx.SprayJsonSupport._
     import PlayListJson._
     parameters('userId,'nume) { (userId, nume) =>
-      onSuccess(PlayListData.getDb.createPlayList(Integer.parseInt(userId), "1-1-2001", nume)) {
+      onSuccess(PlayListData.createPlayList(Integer.parseInt(userId), "1-1-2001", nume)) {
         case (name) =>
           complete("succes")
       }
@@ -63,7 +63,7 @@ trait PlayListRoute extends HttpService {
     parameter('playId ) {(playId)=>
       import TrackJson._
 
-      onSuccess(PlayListData.getDb.getTrackPlayList(Integer.valueOf(playId))) {
+      onSuccess(PlayListData.getTrackPlayList(Integer.valueOf(playId))) {
 
         case (tracks) =>
           complete(tracks.map(track => Track(track.id, track.name, track.link, track.photo, track.vizualizari,track.UploaderId)))
@@ -78,7 +78,7 @@ trait PlayListRoute extends HttpService {
     parameter('userId ) {(userId)=>
       import PlayListJson._
 
-      onSuccess(PlayListData.getDb.getUserPlaylists(Integer.valueOf(userId))) {
+      onSuccess(PlayListData.getUserPlaylists(Integer.valueOf(userId))) {
 
         case (playLists) =>
           complete(
@@ -95,9 +95,9 @@ trait PlayListRoute extends HttpService {
   {
     parameter('playId ){
       (playId)=>
-                onSuccess(PlayListData.getDb.deleteFromTrackToPlayLis(Integer.parseInt(playId))) {
+                onSuccess(PlayListData.deleteFromTrackToPlayLis(Integer.parseInt(playId))) {
                   case (succes)=>
-                  onSuccess(PlayListData.getDb.deletePlayList(Integer.parseInt(playId))) {
+                  onSuccess(PlayListData.deletePlayList(Integer.parseInt(playId))) {
                     case (result) => complete("")
 
                   }
@@ -112,7 +112,7 @@ trait PlayListRoute extends HttpService {
 
     parameter('playId, 'trackId ){(playId,trackId)=>
       {
-        onSuccess(PlayListData.getDb.deleteTrackFromPlayList(Integer.parseInt(trackId),Integer.parseInt(playId)))
+        onSuccess(PlayListData.deleteTrackFromPlayList(Integer.parseInt(trackId),Integer.parseInt(playId)))
         {
           case (succes)=>
                 complete("succes")
@@ -131,7 +131,7 @@ trait PlayListRoute extends HttpService {
     {
       import TrackInPlayListJson._
 
-      onSuccess(PlayListData.getDb.checkTrackPlayList(Integer.parseInt(trackId),Integer.parseInt(playId)))
+      onSuccess(PlayListData.checkTrackPlayList(Integer.parseInt(trackId),Integer.parseInt(playId)))
       {
 
         case (0) =>

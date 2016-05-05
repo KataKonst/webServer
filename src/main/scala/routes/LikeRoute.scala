@@ -3,6 +3,9 @@ package routes
 import DataAcces.LikeData
 import JsonModels._
 import spray.routing._
+import TrackJson._
+
+
 
 /**
   * Created by katakonst on 3/17/16.
@@ -18,7 +21,7 @@ trait LikeRoute  extends HttpService {
     import LikeJson._
 
     parameters('trackId) { (trackId)=>
-    onSuccess(LikeData.getDb.getTrackLikes(Integer.parseInt(trackId))) {
+    onSuccess(LikeData.getTrackLikes(Integer.parseInt(trackId))) {
           case (likes) =>
                      complete( likes.map(like=>Like(like.like_id,like.user_id,like.track_id)))
                }
@@ -28,10 +31,9 @@ trait LikeRoute  extends HttpService {
 
   val likeTrack:Route=path("likeTrack")
   {
-    import LikeJson._
 
     parameters('trackId,'userId) { (trackId,userId)=>
-      onSuccess(LikeData.getDb.likeTrack(Integer.parseInt(trackId),Integer.parseInt(userId))) {
+      onSuccess(LikeData.likeTrack(Integer.parseInt(trackId),Integer.parseInt(userId))) {
         case (nothing) => complete("succes")
       }
     }
@@ -39,9 +41,10 @@ trait LikeRoute  extends HttpService {
 
   val getUserLikedTracks:Route=path("getUserLikedTracks")
   {
-import TrackJson._
+    import TrackJson._
+
     parameters('userId) { (userId)=>
-      onSuccess(LikeData.getDb.getUsersTracksLikes(Integer.parseInt(userId))) {
+      onSuccess(LikeData.getUsersTracksLikes(Integer.parseInt(userId))) {
         case (tracks) =>
           complete(tracks.map(track =>  Track(track.id,
             track.name,
@@ -57,7 +60,7 @@ import TrackJson._
   val getUserTrackLiked:Route=path("getUserTrackLiked") {
     import UserJson._
     parameters('trackId) { (trackId) =>
-      onSuccess(LikeData.getDb.getUsersLikedTrack(Integer.parseInt(trackId))) {
+      onSuccess(LikeData.getUsersLikedTrack(Integer.parseInt(trackId))) {
         case (users) =>
           complete(users.map(user => User(user.id, user.username,user.photoLink)))
       }
@@ -68,7 +71,7 @@ import TrackJson._
     import LikesNrJson._
 
     parameters('trackId) { (trackId) =>
-      onSuccess(LikeData.getDb.getTrackLikesNr(Integer.parseInt(trackId))) {
+      onSuccess(LikeData.getTrackLikesNr(Integer.parseInt(trackId))) {
         case (number) =>
           complete(LikesNr(number))
       }
@@ -80,7 +83,7 @@ import TrackJson._
       import LikesNrJson._
 
       parameters('trackId, 'userId) { (trackId, userId) =>
-        onSuccess(LikeData.getDb.unLike(Integer.parseInt(trackId), Integer.parseInt(userId))) {
+        onSuccess(LikeData.unLike(Integer.parseInt(trackId), Integer.parseInt(userId))) {
           case (number) =>
             complete("succes")
         }
@@ -92,7 +95,7 @@ import TrackJson._
         import UserLikedTrackJson._
 
         parameters('trackId ,'userId) { (trackId,userId) =>
-          onSuccess(LikeData.getDb.checkUserLikedTrack(Integer.parseInt(trackId),Integer.parseInt(userId))) {
+          onSuccess(LikeData.checkUserLikedTrack(Integer.parseInt(trackId),Integer.parseInt(userId))) {
             case (0) =>
               complete(UserLikedTrack(false))
             case _=>

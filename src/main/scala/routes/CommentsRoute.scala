@@ -22,7 +22,7 @@ trait CommentsRoute extends HttpService {
       respondWithMediaType(MediaTypes.`text/plain`) {
         import TrackJson._
         parameters('userid, 'text, 'trackId) { (userid, text, trackid) =>
-          onSuccess(CommentsData.getDb.addComment(Integer.parseInt(userid),
+          onSuccess(CommentsData.addComment(Integer.parseInt(userid),
             "1:2:2015", Integer.parseInt(trackid), text)) {
             case (name) =>
               complete("succes")
@@ -44,7 +44,7 @@ trait CommentsRoute extends HttpService {
 
         parameters('trackId) { (trackid) =>
 
-          onSuccess(CommentsData.getDb.getCommentsOfTracks(Integer.parseInt(trackid))) {
+          onSuccess(CommentsData.getCommentsOfTracks(Integer.parseInt(trackid))) {
             case (name) =>
               complete(name.map(x => Comment(x._1.id
                 , x._1.author_id,
@@ -61,7 +61,7 @@ trait CommentsRoute extends HttpService {
   val deleteComment: Route = path("deleteComment")
 {
     parameters('commId){(commId)=>
-    onSuccess(CommentsData.getDb.deleteComment(Integer.parseInt(commId)))
+    onSuccess(CommentsData.deleteComment(Integer.parseInt(commId)))
     {
       case(succes)=>complete("succes")
 

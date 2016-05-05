@@ -7,11 +7,8 @@ import spray.can.Http
 
 object Main extends App {
     implicit val system = ActorSystem("match-service")
-
     val service = system.actorOf(Props[MatcherActor], "match-service")
-
-    val host = "192.168.43.191";
-     val port = 8080
+    val host = "192.168.1.2"
+    val port = 8080
     IO(Http) ! Http.Bind(service, host, port = port)
-
 }

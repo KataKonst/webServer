@@ -10,18 +10,12 @@ import scala.concurrent.Future
 
 
 object LikeData {
-  val db=new LikeData()
-  def getDb:LikeData=db
-}
-
-class LikeData {
   val  like = TableQuery[Likes]
   val  tracks = TableQuery[Tracks]
   val  user = TableQuery[Users]
-  val  db= Database.forURL("jdbc:mysql://localhost:3306/test", driver="com.mysql.jdbc.Driver", user="root", password="")
 
-  def likeTrack(trackId:Int,userId:Int):Future[Unit]=db.run(DBIO.seq(like +=LikeDb(0, userId,trackId)))
-  def getTrackLikes(trackId:Int): Future[Seq[LikeDb]]=db.run(like.filter((lTrack)=>lTrack.track_id===trackId).result)
+  def likeTrack(trackId:Int,userId:Int):Future[Unit]=DatabaseConn.getConnection.run(DBIO.seq(like +=LikeDb(0, userId,trackId)))
+  def getTrackLikes(trackId:Int): Future[Seq[LikeDb]]=DatabaseConn.getConnection.run(like.filter((lTrack)=>lTrack.track_id===trackId).result)
   def getUsersTracksLikes(userId:Int):Future[Seq[TrackDb]]={
     val query = for {
       (track, like) <- tracks join like on ((lTrack,lLike)=>lTrack.id===lLike.track_id )
@@ -29,7 +23,7 @@ class LikeData {
     }
       yield track
 
-    db.run(query.result)
+    DatabaseConn.getConnection.run(query.result)
   }
 
   def getUsersLikedTrack(trackId:Int):Future[Seq[UserDb]]={
@@ -39,19 +33,23 @@ class LikeData {
     }
       yield user
 
-    db.run(query.result)
+    DatabaseConn.getConnection.run(query.result)
   }
 
-  def getTrackLikesNr(trackId:Int):Future[Int]=db.run(like.filter((lLike)=>lLike.track_id===trackId).length.result)
+  def getTrackLikesNr(trackId:Int):Future[Int]=DatabaseConn.getConnection.run(like.filter((lLike)=>lLike.track_id===trackId).length.result)
 
-  def checkUserLikedTrack(trackid:Int,userId:Int):Future[Int]=db.run(like.filter(
+  def checkUserLikedTrack(trackid:Int,userId:Int):Future[Int]=DatabaseConn.getConnection.run(like.filter(
     (pLike)=>pLike.track_id===trackid&&pLike.user_id===userId)
     .length
     .result)
 
-  def unLike(trackid:Int,userId:Int):Future[Int]=db.run(like.filter((pLike)=>pLike.track_id===trackid&&pLike.user_id===userId).delete)
+  def unLike(trackid:Int,userId:Int):Future[Int]=DatabaseConn.getConnection.run(like.filter((pLike)=>pLike.track_id===trackid&&pLike.user_id===userId).delete)
 
-  def deleteTrack(trackId:Int):Future[Int]=db.run(like.filter((pLike)=>pLike.track_id===trackId).delete)
+  def deleteTrack(trackId:Int):Future[Int]=DatabaseConn.getConnection.run(like.filter((pLike)=>pLike.track_id===trackId).delete)
+
+}
+
+class LikeData {
 
 }
 

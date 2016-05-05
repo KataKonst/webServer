@@ -12,31 +12,25 @@ import scala.concurrent.Future
   */
 object  UserData{
 
-  val db=new UserData()
-  def getDb=db
-}
-
-class UserData {
   val users = TableQuery[Users]
   var follow=TableQuery[FollowersToUsers]
 
 
 
-  val db= Database.forURL("jdbc:mysql://localhost:3306/test", driver="com.mysql.jdbc.Driver", user="root", password="")
 
-  def register(name:String,md5:String):Future[Unit]=  db.run(DBIO.seq(users +=UserDb(0, name, md5,"S")))
-  def getMd5Pass(name:String):Future[Seq[UserDb]]= db.run(users.filter(lUser=>lUser.username === name).result)
-  def getAllUsers(name:String):Future[Seq[UserDb]]=db.run(users.result)
-  def addPhotoToUser(id:Int,photo:String):Future[Int]=db.run(users.filter
-      (lUser=>lUser.id===id).
+  def register(name:String,md5:String):Future[Unit]=  DatabaseConn.getConnection.run(DBIO.seq(users +=UserDb(0, name, md5,"S")))
+  def getMd5Pass(name:String):Future[Seq[UserDb]]= DatabaseConn.getConnection.run(users.filter(lUser=>lUser.username === name).result)
+  def getAllUsers(name:String):Future[Seq[UserDb]]=DatabaseConn.getConnection.run(users.result)
+  def addPhotoToUser(id:Int,photo:String):Future[Int]=DatabaseConn.getConnection.run(users.filter
+  (lUser=>lUser.id===id).
     map(lUser=>lUser.photoLink).update(photo))
-  def getUserById(userId:Int):Future[Seq[UserDb]]=db.run(users.filter((user)=>user.id===userId).result)
+  def getUserById(userId:Int):Future[Seq[UserDb]]=DatabaseConn.getConnection.run(users.filter((user)=>user.id===userId).result)
 
-  def followUser(userId:Int,follow_id:Int):Future[Unit]=db.run(DBIO.seq(follow +=FollowersToUsersDb(1, userId,follow_id)))
+  def followUser(userId:Int,follow_id:Int):Future[Unit]=DatabaseConn.getConnection.run(DBIO.seq(follow +=FollowersToUsersDb(1, userId,follow_id)))
 
-  def unfollowUser(userId:Int,follow_id:Int):Future[Int]=db.run(follow.filter((fol)=>fol.user_id===userId&&fol.follow_user===follow_id).delete)
+  def unfollowUser(userId:Int,follow_id:Int):Future[Int]=DatabaseConn.getConnection.run(follow.filter((fol)=>fol.user_id===userId&&fol.follow_user===follow_id).delete)
 
-  def isUserFollowing(userId:Int,follow_id:Int):Future[Int]=db.run(follow.filter(fol=>fol.user_id===userId&&fol.follow_user===follow_id).length.result)
+  def isUserFollowing(userId:Int,follow_id:Int):Future[Int]=DatabaseConn.getConnection.run(follow.filter(fol=>fol.user_id===userId&&fol.follow_user===follow_id).length.result)
 
   def getFollowing(userId:Int):Future[Seq[UserDb]]={
 
@@ -47,7 +41,7 @@ class UserData {
     }
       yield user
 
-    db.run(query.result)
+    DatabaseConn.getConnection.run(query.result)
 
   }
 
@@ -60,8 +54,12 @@ class UserData {
     }
       yield user
 
-    db.run(query.result)
+    DatabaseConn.getConnection.run(query.result)
 
   }
+}
+
+class UserData {
+
 
 }

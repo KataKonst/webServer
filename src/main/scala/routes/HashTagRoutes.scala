@@ -21,7 +21,7 @@ trait HashTagRoutes extends HttpService  {
         import TrackJson._
         parameters('hashId) { id =>
 
-          onSuccess(HashTagData.getDb.getTracksOnHashTag(Integer.parseInt(id))){
+          onSuccess(HashTagData.getTracksOnHashTag(Integer.parseInt(id))){
             case (name) =>
               complete(name.map(track => Track(track.id,
                 track.name,
@@ -44,7 +44,7 @@ trait HashTagRoutes extends HttpService  {
         import HashTagJson._
         parameters('trackId) { trackId =>
 
-          onSuccess(HashTagData.getDb.getHashTagOnTracks(Integer.parseInt(trackId))){
+          onSuccess(HashTagData.getHashTagOnTracks(Integer.parseInt(trackId))){
             case (hashs) =>
               complete(hashs.map(hash =>HashTag(hash.id,hash.description)))
 
@@ -64,7 +64,7 @@ trait HashTagRoutes extends HttpService  {
         import HashTagJson._
 
 
-        onSuccess(HashTagData.getDb.getHashTags) {
+        onSuccess(HashTagData.getHashTags) {
           case (hashs) =>
             complete(hashs.map(hash => HashTag(hash.id, hash.description)))
 

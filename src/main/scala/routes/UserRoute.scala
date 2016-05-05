@@ -21,17 +21,13 @@ trait UserRoute extends HttpService {
     import spray.httpx.SprayJsonSupport._
     import JsonModels.UserJson._
     parameters('searchText) { searchText =>
-      onSuccess(UserData.getDb.getAllUsers(searchText)){
-
+      onSuccess(UserData.getAllUsers(searchText)){
         case (users)=>
           def comp(e1: (UserDb), e2: (UserDb)):Boolean = LevenshteinMetric.compare(searchText,e1.username).getOrElse(0) < LevenshteinMetric.compare(searchText, e2.username).getOrElse(0)
                 complete(users.sortWith(comp).map((user)=>User(user.id,user.username,user.photoLink)))
 
       }
-
     }
-
-
   }
 
 
@@ -41,7 +37,7 @@ trait UserRoute extends HttpService {
     import spray.httpx.SprayJsonSupport._
     import JsonModels.UserJson._
     parameters('userId) { userId =>
-      onSuccess(UserData.getDb.getUserById(Integer.parseInt(userId))){
+      onSuccess(UserData.getUserById(Integer.parseInt(userId))){
 
         case (users)=>
           complete(users.map((user)=>User(user.id,user.username,user.photoLink)))
@@ -57,11 +53,11 @@ trait UserRoute extends HttpService {
      entity(as[MultipartContent]) { emailData =>
       val id= emailData.parts.head.entity.data.asString
       File("/home/katakonst/licenta/playserver/images/" + emailData.parts.apply(1).filename.get).writeBytes(emailData.parts.apply(1).entity.data.toByteArray)
-      onSuccess(UserData.getDb.addPhotoToUser(Integer.parseInt(id),emailData.parts.apply(1).filename.get)) {
+      onSuccess(UserData.addPhotoToUser(Integer.parseInt(id),emailData.parts.apply(1).filename.get)) {
         case (test)=>
           respondWithMediaType(MediaTypes.`text/html`) {
 
-            complete("<META http-equiv=\"refresh\" content=\"0;URL=http://"+Constants.ip+"\">");
+            complete("<META http-equiv=\"refresh\" content=\"0;URL=http://"+Constants.ip+"\">")
           }      }
     }
 
@@ -73,7 +69,7 @@ trait UserRoute extends HttpService {
     parameters('userId, 'followUser) {(userId,followUser)=>
 
 
-      onSuccess(UserData.getDb.followUser(Integer.parseInt(userId),Integer.parseInt(followUser)))
+      onSuccess(UserData.followUser(Integer.parseInt(userId),Integer.parseInt(followUser)))
       {
         case (succes)=>complete("ssa")
       }
@@ -86,7 +82,7 @@ trait UserRoute extends HttpService {
     parameters('userId, 'followUser) {(userId,followUser)=>
 
 
-      onSuccess(UserData.getDb.unfollowUser(Integer.parseInt(userId),Integer.parseInt(followUser)))
+      onSuccess(UserData.unfollowUser(Integer.parseInt(userId),Integer.parseInt(followUser)))
       {
         case (succes)=>complete("ssa")
       }
@@ -103,7 +99,7 @@ trait UserRoute extends HttpService {
 
       import TrackInPlayListJson._
 
-      onSuccess(UserData.getDb.isUserFollowing(Integer.parseInt(userId),Integer.parseInt(followUser)))
+      onSuccess(UserData.isUserFollowing(Integer.parseInt(userId),Integer.parseInt(followUser)))
       {
         case (0) =>
           complete(TrackInPlayList(false))
@@ -122,7 +118,7 @@ trait UserRoute extends HttpService {
     import JsonModels.UserJson._
 
     parameter('userId){userId=>
-      onSuccess(UserData.getDb.getFollowers(Integer.parseInt(userId))){
+      onSuccess(UserData.getFollowers(Integer.parseInt(userId))){
         case (users)=>
           complete(users.map((user)=>User(user.id,user.username,user.photoLink)))
       }
@@ -136,7 +132,7 @@ trait UserRoute extends HttpService {
 
     parameter('userId) {
       { userId =>
-        onSuccess(UserData.getDb.getFollowing(Integer.parseInt(userId))) {
+        onSuccess(UserData.getFollowing(Integer.parseInt(userId))) {
           case (users) =>
             complete(users.map((user) => User(user.id, user.username, user.photoLink)))
         }
