@@ -31,6 +31,7 @@ object PlayListData {
 
 
   def getUserPlaylists(userId:Int):Future[Seq[PlayListDb]]=DatabaseConn.getConnection.run(playList.filter(playlist=>playlist.authorid===userId).result)
+
   def deletePlayList(playId:Int)=DatabaseConn.getConnection.run(playList.filter((playList)=>playList.id===playId).delete)
   def deleteFromTrackToPlayLis(playId:Int):Future[Int]=DatabaseConn.getConnection.run(trackPlaylist.filter(ptrackPlaylist=>ptrackPlaylist.playid===playId).delete)
 

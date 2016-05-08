@@ -71,8 +71,9 @@ trait CommentsRoute extends HttpService {
 
 }
 
-  def getAddCommentRoute=addComment
-  def getDeleteComRoute=deleteComment
+
+
+  def getCommentROutes=addComment~deleteComment~getTracksComments
 
 
 }

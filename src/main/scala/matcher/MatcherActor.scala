@@ -35,46 +35,18 @@ class MatcherActor extends Actor
 
   def receive = runRoute(login~
     register~
-    this.getSaveRoute~
-    this.getSearchRoute~
-    this.getTracksRoute~
     matcher~
     initMAtcher~
-    this.getVisRoute~
-    this.getTrackVisRoute~
-    this.getAddCommentRoute~
-    this.getTracksComments~
-    this.getPlayLists~
-    this.getAddToPlayListRoute~
-    this.getCreatePLayListRoute~
-    this.getTracksOfPlaylistRoute~
-    this.getTrackLikesRoute~
-    this.getLikeTrackRoute~
-    this.getUserLikedTracksRoute~
-    this.getUserTracksLikedRoute~
-    this.getTrackLikesNr~
-    this.getSearchedUsersRoute~
-    this.getUserPlayLists~
-    this.getDeletePlayListRoute~
-    this.getUnLikeRoute~
-    this.getCheckUserLikedTrackRoute~
-     this.getDeleteTrackFromPlayListRoute~
-    this.getCheckTrackFromPlayListRoute~
-    this.getDeleteComRoute~
-    this.getHashOfTrackRoute~
-    this.getTracksOfHash~
-    this.getAllHashTagsRoute~
-    this.getAddPhotoToUserRoute~
-    this.getUserById~
-    this.getUserUploadedTracksRoute~
-     this.getDeleteTrackRoute~
-    this.getFollowUserRoute~
-    this.getUnfollowUserRoute~
-  this.getIsUserFollowingRoute~
-   this.getFollowingUserTracksRoute~
-   this.getFollowingRoute~
-   this.getFollowersRoute~
-  this.matchTracks)
+    this.matchTracks~
+     this.getLikeRoutes~
+  this.getCommentROutes~
+  this.getHashRoutes~
+  this.getPlayListRoutes~
+  this.getSaveRoutes~
+  this.getSearchRoutes~
+  this.getTrackRoutes~
+  this.getUserRoutes~
+  this.getViewsRoute)
 }
 
 trait MatchService extends HttpService {

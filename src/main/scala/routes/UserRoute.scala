@@ -143,14 +143,8 @@ trait UserRoute extends HttpService {
   }
 
 
-  def getSearchedUsersRoute=searchedUsers
-  def getAddPhotoToUserRoute=addPhotoToUser
-  def getSearchByIdRoute=getUserById
-  def getIsUserFollowingRoute=isUserFollowing
-  def getFollowUserRoute=followUser
-  def getUnfollowUserRoute=unFollowUser
-  def getFollowersRoute=getFollowers
-  def getFollowingRoute=getFollowing
+
+  def getUserRoutes=searchedUsers~addPhotoToUser~getUserById~isUserFollowing~followUser~unFollowUser~getFollowers~getFollowing
 
 
 

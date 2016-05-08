@@ -38,8 +38,9 @@ trait AddVisRoute  extends HttpService {
 
 
   }
-  def getVisRoute=addVisRoute
-  def getTrackVisRoute=trackVis
+
+
+  def getViewsRoute=addVisRoute~trackVis
 
 
 

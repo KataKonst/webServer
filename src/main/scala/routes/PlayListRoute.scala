@@ -147,14 +147,9 @@ trait PlayListRoute extends HttpService {
 
 
 
-  def getCreatePLayListRoute=createPlayList
-  def getAddToPlayListRoute=addToPlayList
-  def getPlayListsRoute=getPlayLists
-  def getTracksOfPlaylistRoute=tracksOfPlayList
-  def getUserPlayLists=getUserPlayList
-  def getDeletePlayListRoute=deletePlayList
-  def getDeleteTrackFromPlayListRoute=deleteTrackFromPlayList
-  def getCheckTrackFromPlayListRoute=checkTrackFromPlayList
+
+
+  def getPlayListRoutes=createPlayList~addToPlayList~getPlayLists~tracksOfPlayList~getUserPlayList~deletePlayList~deleteTrackFromPlayList~checkTrackFromPlayList
 
 
 

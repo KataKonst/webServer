@@ -34,6 +34,6 @@ trait SearchRoute  extends HttpService {
       }
     }
   }
-  def getSearchRoute=searchRoute
+  def getSearchRoutes=searchRoute
 
 }

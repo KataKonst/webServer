@@ -73,8 +73,7 @@ trait HashTagRoutes extends HttpService  {
       }
     }
 
-  def getHashOfTrackRoute=hashOfTracks
-  def getTracksOfHash=hashTracks
-  def getAllHashTagsRoute=getAllHashs
+
+  def getHashRoutes=hashOfTracks~hashTracks~getAllHashs
 
 }

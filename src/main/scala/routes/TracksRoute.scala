@@ -81,6 +81,39 @@ trait TracksRoute extends HttpService {
     }
   }
 
+
+
+  val getTrackByMd5Route:Route=path("getTrackByMd5") {
+    get {
+      parameters('md5) { md5 => {
+        import spray.httpx.SprayJsonSupport._
+
+        respondWithMediaType(MediaTypes.`text/plain`) {
+          import TrackJson._
+
+          onSuccess(TracksData.getTrackByLink(md5))
+           {case (tracksList) =>
+               complete(tracksList.map(track => Track(track.id,
+                        track.name,
+                        track.link,
+                        track.photo,
+                        track.vizualizari,
+                        track.UploaderId)))
+          }
+
+        }
+
+      }
+
+      }
+
+
+    }
+  }
+
+
+
+
   val FollowingUsersTracks:Route=path("getUserFollowingTracks")
   {
     import spray.httpx.SprayJsonSupport._
@@ -151,14 +184,7 @@ trait TracksRoute extends HttpService {
 
   }
 
-
-
-
-
-  def getFollowingUserTracksRoute=FollowingUsersTracks
-  def getTracksRoute=tracks
-  def getUserUploadedTracksRoute=userUploadedTracks
-  def getDeleteTrackRoute=deleteTrack
+  def getTrackRoutes=FollowingUsersTracks~tracks~userUploadedTracks~deleteTrack~getTrackByMd5Route
 
 
 

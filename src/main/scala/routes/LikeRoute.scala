@@ -108,12 +108,8 @@ trait LikeRoute  extends HttpService {
 
     }
 
-  def getUserLikedTracksRoute=getUserLikedTracks
-  def getLikeTrackRoute=likeTrack
-  def getTrackLikesRoute=getTrackLikes
-  def getUserTracksLikedRoute=getUserTrackLiked
-  def getCheckUserLikedTrackRoute=checkUserLikedTrack
-  def getUnLikeRoute=unlike
+
+  def getLikeRoutes=getTrackLikesNr~getUserLikedTracks~likeTrack~getTrackLikes~getUserTrackLiked~checkUserLikedTrack~unlike
 
 
 
